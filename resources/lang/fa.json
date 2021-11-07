@@ -1,0 +1,15 @@
+{
+    "direction" : "rtl",
+    "Login": "ورود",
+    "E-Mail Address": "پست الکترونیک",
+    "Password": "رمز عبور",
+    "Confirm Password": "تایید رمز عبور",
+    "Remember Me": "مرا به یاد داشته باش",
+    "Forgot Your Password?": "رمز عبور خود را فراموش کرده اید؟",
+    "Logout": "خروج",
+    "Register": "ثبت نام",
+    "Name": "نام",
+    "You are logged in as": "شما با نقش :role وارد سیستم شده اید",
+    "Dashboard": "پیش‌خوان",
+    "Account": "حساب کاربری"
+}
