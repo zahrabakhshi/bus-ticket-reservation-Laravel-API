@@ -15,11 +15,6 @@ class Controller extends BaseController
 
     public function test()
     {
-        $user = User::find(5);
-        dd(Auth::user());
-        dd(array_column($user->roles->toArray(),'name'));
-        foreach ($user->roles as $role) {
-            dd($role->name);
-        }
+        return'hi';
     }
 }

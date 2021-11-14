@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\AppUser;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class UserController extends Controller
+class SuperUserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -13,7 +15,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        dd(User::find(1)->roles);
+        //
     }
 
     /**
@@ -80,5 +82,16 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function renderView()
+    {
+        $data = [
+            'user' => Auth::user(),
+            'last-ticket' => [
+                'ticket 1', 'ticket 2'
+            ],
+        ];
+        return view('dashboards.user', $data);
     }
 }
