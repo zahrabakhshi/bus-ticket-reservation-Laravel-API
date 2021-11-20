@@ -15,8 +15,8 @@ class CreatePassengerReserveTable extends Migration
     {
         Schema::create('passenger_reserve', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('reserve+id');
-            $table->foreignId('passenger_id');
+            $table->foreignId('reserve_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('passenger_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

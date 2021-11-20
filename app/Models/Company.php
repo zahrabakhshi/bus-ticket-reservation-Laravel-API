@@ -12,4 +12,9 @@ class Company extends Model
     public function vehicles(){
         return $this->hasMany(Vehicle::class);
     }
+
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
+
 }

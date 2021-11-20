@@ -16,8 +16,7 @@ class CreateTicketsTable extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->smallInteger('seat_number');
-            $table->foreignId('passenger_id');
-            $table->foreignId('reserve_id');
+            $table->foreignId('passenger_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddTripIdToLocationsTable extends Migration
+class CreateTripsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class AddTripIdToLocationsTable extends Migration
      */
     public function up()
     {
-        Schema::table('locations', function (Blueprint $table) {
-            $table->foreignId('trip_id')->after('id');
+        Schema::create('trips', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('vehicle_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->timestamps();
         });
     }
 
@@ -25,8 +27,6 @@ class AddTripIdToLocationsTable extends Migration
      */
     public function down()
     {
-        Schema::table('locations', function (Blueprint $table) {
-            $table->dropColumn('trip_id');
-        });
+        Schema::dropIfExists('trips');
     }
 }

@@ -15,8 +15,8 @@ class CreateReservesTable extends Migration
     {
         Schema::create('reserves', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
-            $table->foreignId('vehicle_id');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('vehicle_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->bigInteger('start_location_id')->unsigned();
             $table->foreign('start_location_id')
                 ->references('id')

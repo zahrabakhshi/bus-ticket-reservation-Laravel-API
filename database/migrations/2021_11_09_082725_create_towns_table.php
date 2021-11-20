@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddTownIdToLocationsTable extends Migration
+class CreateTownsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class AddTownIdToLocationsTable extends Migration
      */
     public function up()
     {
-        Schema::table('locations', function (Blueprint $table) {
-            $table->foreignId('town_id');
+        Schema::create('towns', function (Blueprint $table) {
+            $table->id();
+            $table->string('name',50)->unique();
+            $table->timestamps();
         });
     }
 
@@ -25,8 +27,6 @@ class AddTownIdToLocationsTable extends Migration
      */
     public function down()
     {
-        Schema::table('locations', function (Blueprint $table) {
-            $table->dropColumn('town_id');
-        });
+        Schema::dropIfExists('towns');
     }
 }

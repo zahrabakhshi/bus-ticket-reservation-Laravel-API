@@ -15,10 +15,9 @@ class CreateLocationsTable extends Migration
     {
         Schema::create('locations', function (Blueprint $table) {
             $table->id();
-            $table->string('name',50);
-            $table->timestamp('hit_time');
-            $table->foreignId('vehicle_id');
-            $table->integer('direction_batch');
+            $table->foreignId('trip_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('town_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->bigInteger('time_hit');
             $table->enum('type',['start_loc','end_loc','mid_loc']);
             $table->boolean('is_rest_loc')->default(false);
             $table->timestamps();

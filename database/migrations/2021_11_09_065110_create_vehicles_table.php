@@ -19,7 +19,7 @@ class CreateVehiclesTable extends Migration
             $table->string('type',50)->nullable();
             $table->string('name',50)->nullable();
             $table->smallInteger('seats_number')->nullable();
-            $table->foreignId('company_id');
+            $table->foreignId('company_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->boolean('is_vip')->nullable();
             $table->boolean('has_monitor')->nullable();
             $table->boolean('seat_bed')->nullable();

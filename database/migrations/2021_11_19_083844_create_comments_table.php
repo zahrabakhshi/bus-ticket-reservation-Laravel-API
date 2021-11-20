@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateTimeHitToLocationsTable extends Migration
+class CreateCommentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,11 @@ class UpdateTimeHitToLocationsTable extends Migration
      */
     public function up()
     {
-        Schema::table('locations', function (Blueprint $table) {
-            $table->bigInteger('time_hit')->change();
+        Schema::create('comments', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('company_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();;
+            $table->text('content');
+            $table->timestamps();
         });
     }
 
@@ -25,8 +28,6 @@ class UpdateTimeHitToLocationsTable extends Migration
      */
     public function down()
     {
-        Schema::table('locations', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('comments');
     }
 }
