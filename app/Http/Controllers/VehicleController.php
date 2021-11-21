@@ -45,10 +45,11 @@ class VehicleController extends Controller
                 'plate2' => 'required|regex:/^[0-9]{3}$/',
                 'plate3' => 'required|regex:/^[a-z]{1}$/',
                 'plate4' => 'required|regex:/^[0-9]{2}$/',
+                'capacity' => 'required|integer|min:20|max:50'
             ]);
 
             $input = $request->only([
-                'plate1', 'plate2', 'plate3', 'plate4'
+                'plate1', 'plate2', 'plate3', 'plate4','capacity'
             ]);
 
 
@@ -57,6 +58,7 @@ class VehicleController extends Controller
             $new_vehicle = [
                 'company_id' => "26",
                 'plate' => $plate,
+                'capacity' => $input['capacity'],
             ];
 
             Vehicle::create($new_vehicle);

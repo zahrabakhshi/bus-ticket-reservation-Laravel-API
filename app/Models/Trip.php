@@ -18,4 +18,8 @@ class Trip extends Model
     public function locations(){
         return $this->hasMany(Location::class);
     }
+
+    public function reserves(){
+        return $this->hasMany(Reserve::class);
+    }
 }

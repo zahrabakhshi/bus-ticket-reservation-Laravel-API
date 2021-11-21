@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\Company;
 use App\Models\Location;
+use App\Models\Passenger;
+use App\Models\Reserve;
 use App\Models\Trip;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,75 +17,159 @@ class LandingController extends Controller
 
     public function getLandingData()
     {
-        return response()->json([
-            'data' => [
-                'companies' => $this->getRandomCompanies(),
-                'comments' => $this->getRandomComments(),
-            ],
-            'message' => 'successful data fetched',
-            'status' => Response::HTTP_OK,
-        ]);
+        try {
+            return response()->json([
+                'data' => [
+                    'companies' => $this->getRandomCompanies(),
+                    'comments' => $this->getRandomComments(),
+                ],
+                'message' => 'successful data fetched',
+                'status' => Response::HTTP_OK,
+            ]);
+        } catch (\Throwable $exception) {
+            return response()->json([
+                'message' => 'failed fetched data',
+                'status' => $exception->getCode(),
+            ]);
+        }
+
     }
 
     public function getRandomCompanies()
     {
-        return Company::select("name", "email", "phone_number")->inRandomOrder()->limit(5)->get();
+        try {
+            return Company::select("name", "email", "phone_number")->inRandomOrder()->limit(5)->get();
+        } catch (\Throwable $exception) {
+            return response()->json([
+                'message' => 'failed to get random companies',
+                'status' => $exception->getCode(),
+            ]);
+        }
     }
 
     public function getRandomComments()
     {
-//        return Company::has('comments')->->inRandomOrder()->limit(5)->get();
-//        return Comment::with('company:name,email,phone_number')->inRandomOrder()->limit(5)->get(['content','created_at']);
-//        return Comment::select('content','created_at')->with('company:name,email,phone_number')->inRandomOrder()->limit(5)->get();
-        return Comment::with('company')->inRandomOrder()->limit(5)->get();
+        try {
+            return Comment::with('company')->inRandomOrder()->limit(5)->get();
+        } catch (\Throwable $exception) {
+            return response()->json([
+                'message' => 'failed to get random comments',
+                'status' => $exception->getCode(),
+            ]);
+        }
     }
 
     public function getReservableVehicles(Request $request)
     {
+        try {
 
-        $trip_exist = true;
-        $trips = [];
+            //validate user request
+            $this->validate($request, [
+                'origin' => 'required|exists:towns,id',
+                'date' => 'required|integer',
+                'destination' => 'required|exists:towns,id',
+            ]);
 
-        $start_locations_eluquent = Location::where('town_id', $request->origin)->where('type', 'start_loc')->where('time_hit', '>=', $request->date)->where('time_hit', '<=', strtotime("+1 day", $request->date));
-        if ($start_locations_eluquent->doesntExist()) {
-            $trip_exist = false;
-        }
-        $start_locations = $start_locations_eluquent->get();
+            //To prevent sending unwanted data
+            $input = $request->only([
+                'origin', 'date', 'destination',
+            ]);
 
-        foreach ($start_locations as $start_location) {
+            $trips = [];
 
-            $end_location = Location::where('trip_id', $start_location->trip_id)->get();
+            //Find the origin location on the user's desired date
+            $start_locations_eluquent = Location::where('town_id', $input['origin'])
+                ->where('type', 'start_loc')
+                ->where('time_hit', '>=', $input['date'])
+                ->where('time_hit', '<', strtotime("+1 day", $input['date']));
 
-            if ($start_location->trip_id == 15) {
-                dd(Trip::find(15));
+            //If there is no vehicle from the origin on the user's date, return the appropriate json
+            if ($start_locations_eluquent->doesntExist()) {
+
+                return response()->json([
+                    'message' => 'no trip exist with this origin in this date',
+                    'status' => Response::HTTP_OK,
+                ]);
+
             }
 
-            $trip = Trip::find($start_location->trip_id);
-            $trips[] = [
-                'id' => $trip->id,
-                'vehicle' => $trip->vehicle()->get(),
-                'start_location' => $start_location,
-                'end_location' => $end_location,
-            ];
+            //get collection of start locations
+            $start_locations = $start_locations_eluquent->get();
 
+            //create a flag to determine is there any end location for this trip or not
+            $flag = false;
 
-        }
-        if (!$trip_exist) {
+            //To find a trip with the destination intended by the user
+            foreach ($start_locations as $start_location) {
+
+                //Find the destination location on the user's desired date
+                $end_location_eluquent = Location::where('trip_id', $start_location->trip_id)->where('town_id', $input['destination'])->where('type', 'end_loc');
+
+                //If there is any vehicle with the user's intended destination return the appropriate json
+                if ($end_location_eluquent->exists()) {
+
+                    $flag = true;
+
+                    //get Collection object of end locations
+                    $end_location = $end_location_eluquent->get();
+
+                    //Find trip with this origin and destination
+                    $trip = Trip::find($start_location->trip_id);
+
+                    // Find the remaining capacity of the vehicle:
+                    $capacity = $trip->vehicle->capacity;
+
+                    $reserved_seats = Reserve::where('trip_id', $trip->id)->exists() ? Reserve::where('trip_id', $trip->id)->passengers->count() : 0;
+
+                    $remaining_capacity = $capacity - $reserved_seats;
+
+                    if( $remaining_capacity == 0 ){
+                        return response()->json([
+                            'message' => 'The capacity of the buses is full',
+                            'status' => Response::HTTP_OK,
+                        ]);
+                    }
+
+                    //Add a trip to the trips array by scrolling the loop
+                    $trips[] = [
+                        'id' => $trip->id,
+                        'vehicle' => $trip->vehicle()->get(),
+                        'start_location' => $start_location,
+                        'end_location' => $end_location,
+                        'capacity' => $remaining_capacity
+                    ];
+
+                }
+
+                //If there is no vehicle with the user's intended destination return the appropriate json
+                if ($flag == false) {
+
+                    return response()->json([
+                        'message' => 'no trip exist with this destination in this date',
+                        'status' => Response::HTTP_OK,
+                    ]);
+
+                }
+
+            }
+
+            //return trips
             return response()->json([
-                'message' => 'no trip exist with this origin and destination in this time',
+                'data' => [
+                    'trips' => $trips
+                ],
+                'message' => 'successful trips fetched',
                 'status' => Response::HTTP_OK,
+            ]);
+
+        } catch (\Throwable $exception) {
+            return response()->json([
+                'message' => 'failed to fetch trips',
+                'status' => $exception->getCode(),
+                'msg' => $exception->getMessage(),
             ]);
         }
 
-        return response()->json([
-            'data' => [
-                'trips' => $trips
-            ],
-            'message' => 'successful trips fetched',
-            'status' => Response::HTTP_OK,
-        ]);
-
     }
-
 
 }
