@@ -10,6 +10,7 @@ use App\Models\Passenger;
 use App\Models\Reserve;
 use App\Models\Trip;
 use Illuminate\Http\Request;
+use Nette\Schema\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class LandingController extends Controller
@@ -88,7 +89,7 @@ class LandingController extends Controller
 
                 return response()->json([
                     'message' => 'no trip exist with this origin in this date',
-                    'status' => Response::HTTP_OK,
+                    'status' => Response::HTTP_NO_CONTENT,
                 ]);
 
             }
@@ -119,6 +120,7 @@ class LandingController extends Controller
                     // Find the remaining capacity of the vehicle:
                     $capacity = $trip->vehicle->capacity;
 
+                    //Add the remaining seats to the number of passengers if the booking record was previously recorded for this trip, otherwise set it to zero.
                     $reserved_seats = Reserve::where('trip_id', $trip->id)->exists() ? Reserve::where('trip_id', $trip->id)->passengers->count() : 0;
 
                     $remaining_capacity = $capacity - $reserved_seats;
@@ -126,7 +128,7 @@ class LandingController extends Controller
                     if( $remaining_capacity == 0 ){
                         return response()->json([
                             'message' => 'The capacity of the buses is full',
-                            'status' => Response::HTTP_OK,
+                            'status' => Response::HTTP_NO_CONTENT,
                         ]);
                     }
 
@@ -146,7 +148,7 @@ class LandingController extends Controller
 
                     return response()->json([
                         'message' => 'no trip exist with this destination in this date',
-                        'status' => Response::HTTP_OK,
+                        'status' => Response::HTTP_NO_CONTENT,
                     ]);
 
                 }
@@ -154,22 +156,28 @@ class LandingController extends Controller
             }
 
             //return trips
+                return response()->json([
+                    'data' => [
+                        'trips' => $trips
+                    ],
+                    'message' => 'successful trips fetched',
+                    'status' => Response::HTTP_OK,
+                ]);
+
+        }catch (ValidationException$exception){
             return response()->json([
-                'data' => [
-                    'trips' => $trips
-                ],
-                'message' => 'successful trips fetched',
-                'status' => Response::HTTP_OK,
+                'message' => $exception->getMessages(),
+                'status' => $exception->getCode(),
             ]);
 
         } catch (\Throwable $exception) {
             return response()->json([
                 'message' => 'failed to fetch trips',
                 'status' => $exception->getCode(),
-                'msg' => $exception->getMessage(),
             ]);
         }
 
     }
+
 
 }
