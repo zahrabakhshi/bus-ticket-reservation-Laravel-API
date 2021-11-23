@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\LandingController;
 use App\Http\Controllers\AppUser\AdminController;
 use App\Http\Controllers\AppUser\CompanyController;
 use App\Http\Controllers\AppUser\SuperUserController;
@@ -56,4 +57,5 @@ Route::group(['prefix' => 'user' , 'middleware' => 'permission:user' ], function
 //    Route::get('settings',[AdminController::class,'settings'])->name('user-settings');
 });
 
+Route::post('/reservable', [LandingController::class, 'getReservableVehicles']);
 
