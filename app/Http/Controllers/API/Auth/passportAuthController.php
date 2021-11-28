@@ -42,7 +42,6 @@ class passportAuthController extends Controller
                 'message' => 'login fail',
                 'error' => $exception->getMessage(),
                 'code' => $exception->getCode(),
-                'status' => $exception->status,
             ]);
         }
 

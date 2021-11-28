@@ -5,11 +5,15 @@ use App\Http\Controllers\API\AppUser\CompanyController;
 use App\Http\Controllers\API\Auth\passportAuthController;
 use App\Http\Controllers\API\AppUser\SuperUserController;
 use App\Http\Controllers\API\LandingController;
+use App\Http\Controllers\API\ReserveController;
 use App\Http\Controllers\API\TownController;
 use App\Http\Controllers\API\TripController;
 use App\Http\Controllers\API\VehicleController;
+use App\Models\Trip;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +37,7 @@ Route::post('login', [passportAuthController::class, 'login']);
 //add this middleware to ensure that every request is authenticated
 Route::middleware('auth:api')->name('api.')->group(function () {
 
-    Route::get('user', [passportAuthController::class, 'authenticatedUserDetails']);
+//    Route::get('user', [passportAuthController::class, 'authenticatedUserDetails']);
 
     Route::group(['prefix' => 'superuser', 'middleware' => 'apipermission:super-user'], function () {
         Route::get('dashboard', [SuperUserController::class, 'renderView'])->name('superuser-dashboard');
@@ -45,12 +49,32 @@ Route::middleware('auth:api')->name('api.')->group(function () {
 
     Route::group(['prefix' => 'company', 'middleware' => 'apipermission:company'], function () {
         Route::resource('vehicle', VehicleController::class);
+
         Route::resource('trip', TripController::class);
         Route::resource('town', TownController::class);
         Route::get('dashboard', [CompanyController::class, 'index'])->name('company-dashboard');
+
     });
+
+    Route::post('/temporaryreserve', [ReserveController::class,'temporaryReserve']);//2
+
+    Route::post('/store', [ReserveController::class, 'store']);
+
+    Route::post('/receipts', [ReserveController::class, 'receipts']);//3
 
 });
 
 Route::get('/landing', [LandingController::class, 'getLandingData']);
-Route::post('/reservable', [LandingController::class, 'getReservableVehicles']);
+
+Route::post('/reservables', [LandingController::class, 'getReservableVehicles']);
+
+Route::post('/businfo', [ReserveController::class, 'busInfo']); //1
+
+//Route::get('/free',[ReserveController::class,'findFreeSeats2'] );
+
+//Route::post('/flush',function (Request $request){
+//     $request->session()->flush();
+//});
+//Route::post('/sessions',function (Request $request){
+//    dd($request->session()->all());
+//});

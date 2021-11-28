@@ -62,14 +62,14 @@ class TownController extends Controller
 
             return response()->json([
                 'message' => $exception->getMessage(),
-                'status' => $exception->status,
+                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
             ]);
 
         }catch(Throwable $exception){
 
             return response()->json([
                 'message' => 'failed town add',
-                'status' => $exception->getCode(),
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
 
         }

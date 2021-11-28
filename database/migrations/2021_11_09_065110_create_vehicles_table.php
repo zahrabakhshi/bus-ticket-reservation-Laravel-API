@@ -18,7 +18,7 @@ class CreateVehiclesTable extends Migration
             $table->string('plate',30)->unique();
             $table->string('type',50)->nullable();
             $table->string('name',50)->nullable();
-            $table->smallInteger('seats_number');
+            $table->smallInteger('capacity');
             $table->foreignId('company_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->boolean('is_vip')->nullable();
             $table->boolean('has_monitor')->nullable();

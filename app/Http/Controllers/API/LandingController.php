@@ -21,6 +21,7 @@ class LandingController extends Controller
         try {
             return response()->json([
                 'data' => [
+                    'app info' => $this->getAppInfo(),
                     'companies' => $this->getRandomCompanies(),
                     'comments' => $this->getRandomComments(),
                 ],
@@ -30,7 +31,7 @@ class LandingController extends Controller
         } catch (\Throwable $exception) {
             return response()->json([
                 'message' => 'failed fetched data',
-                'status' => $exception->getCode(),
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
 
@@ -43,7 +44,7 @@ class LandingController extends Controller
         } catch (\Throwable $exception) {
             return response()->json([
                 'message' => 'failed to get random companies',
-                'status' => $exception->getCode(),
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
     }
@@ -55,7 +56,7 @@ class LandingController extends Controller
         } catch (\Throwable $exception) {
             return response()->json([
                 'message' => 'failed to get random comments',
-                'status' => $exception->getCode(),
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
     }
@@ -121,11 +122,11 @@ class LandingController extends Controller
                     $capacity = $trip->vehicle->capacity;
 
                     //Add the remaining seats to the number of passengers if the booking record was previously recorded for this trip, otherwise set it to zero.
-                    $reserved_seats = Reserve::where('trip_id', $trip->id)->exists() ? Reserve::where('trip_id', $trip->id)->passengers->count() : 0;
+                    $reserved_seats = $trip->tickets->count();
 
                     $remaining_capacity = $capacity - $reserved_seats;
 
-                    if( $remaining_capacity == 0 ){
+                    if ($remaining_capacity == 0) {
                         return response()->json([
                             'message' => 'The capacity of the buses is full',
                             'status' => Response::HTTP_NO_CONTENT,
@@ -138,7 +139,7 @@ class LandingController extends Controller
                         'vehicle' => $trip->vehicle()->get(),
                         'start_location' => $start_location,
                         'end_location' => $end_location,
-                        'capacity' => $remaining_capacity
+                        'remaining capacity' => $remaining_capacity
                     ];
 
                 }
@@ -156,28 +157,47 @@ class LandingController extends Controller
             }
 
             //return trips
-                return response()->json([
-                    'data' => [
-                        'trips' => $trips
-                    ],
-                    'message' => 'successful trips fetched',
-                    'status' => Response::HTTP_OK,
-                ]);
+            return response()->json([
+                'data' => [
+                    'trips' => $trips
+                ],
+                'message' => 'successful trips fetched',
+                'status' => Response::HTTP_OK,
+            ]);
 
-        }catch (ValidationException$exception){
+        } catch (ValidationException$exception) {
             return response()->json([
                 'message' => $exception->getMessages(),
-                'status' => $exception->getCode(),
+                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
             ]);
 
         } catch (\Throwable $exception) {
             return response()->json([
                 'message' => 'failed to fetch trips',
-                'status' => $exception->getCode(),
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
 
     }
 
+    public function getAppInfo()
+    {
+
+        try {
+            return response()->json([
+                'data' => [
+                    'info' => 'سیستم رزرواسیون اتوبوس هستیم چاکر شما',
+                ],
+                'message' => 'successful data fetched',
+                'status' => Response::HTTP_OK,
+            ]);
+        } catch (\Throwable $exception) {
+            return response()->json([
+                'message' => 'failed fetched data',
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+            ]);
+        }
+
+    }
 
 }

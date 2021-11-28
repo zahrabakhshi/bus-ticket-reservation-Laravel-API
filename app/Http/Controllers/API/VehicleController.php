@@ -84,13 +84,13 @@ class VehicleController extends Controller
 
             return response()->json([
                 'message' => $exception->getMessage(),
-                'status' => $exception->status,
+                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
             ]);
 
         } catch (Throwable $exception) {
             return response()->json([
                 'message' => 'failed vehicle add',
-                'status' => $exception->getCode(),
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
 
@@ -118,7 +118,7 @@ class VehicleController extends Controller
         } catch (Throwable $exception) {
             return response()->json([
                 'message' => 'failed to fetch vehicle data',
-                'status' => $exception->getCode(),
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
     }
@@ -226,13 +226,13 @@ class VehicleController extends Controller
 
             return response()->json([
                 'message' => $exception->getMessage(),
-                'status' => $exception->status,
+                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
             ]);
 
         } catch (Throwable $exception) {
             return response()->json([
                 'message' => 'failed vehicle updated',
-                'status' => $exception->getCode(),
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
 
@@ -244,8 +244,7 @@ class VehicleController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public
-    function destroy($id)
+    public function destroy($id)
     {
 
         try {
@@ -271,9 +270,7 @@ class VehicleController extends Controller
 
             return response()->json([
                 'message' => 'failed vehicle delete',
-//                'error' => $exception->getMessage(),
-                'status' => $exception->getCode(),
-//                'status' => $exception->status,
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
 

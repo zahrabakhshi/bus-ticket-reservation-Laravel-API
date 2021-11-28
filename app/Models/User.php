@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Ticket;
+use App\Models\Passenger;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -51,6 +53,15 @@ class User extends Authenticatable
     public function hasRole($role){
 
         return in_array($role ,$this->roles()->pluck('name')->toArray());
+    }
+
+    public function buyTickets(){
+        return $this->hasManyThrough(Ticket::class, Reserve::class);
+    }
+
+
+    public function tickets(){
+        return $this->morphMany(Ticket::class, 'ticketable');
     }
 
 }

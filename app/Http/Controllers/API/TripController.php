@@ -106,13 +106,13 @@ class TripController extends Controller
 
             return response()->json([
                 'message' => $exception->getMessage(),
-                'status' => $exception->status,
+                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
             ]);
 
         } catch (Throwable $exception) {
             return response()->json([
                 'message' => 'failed trip add',
-                'status' => $exception->getCode(),
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
 
@@ -141,7 +141,7 @@ class TripController extends Controller
 
             return response()->json([
                 'message' => 'failed to fetch trip data',
-                'status' => $exception->getCode(),
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
     }
@@ -194,7 +194,7 @@ class TripController extends Controller
                 if (!Gate::allows('update-trip', $trip)) {
                     return response()->json([
                         'message' => 'forbidden',
-                        'code' => 403,
+                        'code' => Response::HTTP_FORBIDDEN,
                     ]);
                 }
 
@@ -240,13 +240,13 @@ class TripController extends Controller
 
             return response()->json([
                 'message' => $exception->getMessage(),
-                'status' => $exception->status,
+                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
             ]);
 
         } catch (Throwable $exception) {
             return response()->json([
                 'message' => 'fail trip updated',
-                'status' => $exception->getCode(),
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
 
@@ -268,7 +268,7 @@ class TripController extends Controller
             if (Gate::allows('update-trip', $trip)) {
                 return response()->json([
                     'message' => 'forbidden',
-                    'code' => 403,
+                    'code' => Response::HTTP_FORBIDDEN,
                 ]);
             }
             $trip->delete();
@@ -282,9 +282,7 @@ class TripController extends Controller
 
             return response()->json([
                 'message' => 'failed vehicle delete',
-//                'error' => $exception->getMessage(),
-                'code' => $exception->getCode(),
-//                'status' => $exception->status,
+                'code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
 

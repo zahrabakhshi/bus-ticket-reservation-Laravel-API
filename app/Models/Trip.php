@@ -22,4 +22,8 @@ class Trip extends Model
     public function reserves(){
         return $this->hasMany(Reserve::class);
     }
+
+    public function tickets(){
+        return $this->hasManyThrough(Ticket::class, Reserve::class);
+    }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePassengerReserveTable extends Migration
+class CreateTicketsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreatePassengerReserveTable extends Migration
      */
     public function up()
     {
-        Schema::create('passenger_reserve', function (Blueprint $table) {
+        Schema::create('tickets', function (Blueprint $table) {
             $table->id();
+            $table->smallInteger('seat_number');
             $table->foreignId('reserve_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('passenger_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->integer('ticketable_id');
+            $table->string('ticketable_type');
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ class CreatePassengerReserveTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('passenger_reserve');
+        Schema::dropIfExists('tickets');
     }
 }

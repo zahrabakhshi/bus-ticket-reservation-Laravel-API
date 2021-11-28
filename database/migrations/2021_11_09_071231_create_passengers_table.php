@@ -18,6 +18,7 @@ class CreatePassengersTable extends Migration
             $table->string('name',50)->nullable();
             $table->string('last_name',50)->nullable();
             $table->string('national_code',10)->unique();
+            $table->boolean('gender');
             $table->timestamps();
         });
     }

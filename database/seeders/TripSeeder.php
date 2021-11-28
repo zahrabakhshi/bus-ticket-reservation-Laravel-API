@@ -29,7 +29,10 @@ class TripSeeder extends Seeder
                 //We have trip and location tables. we have to set records in them
 
                 //Generate a trip
-                $new_trip = Trip::create(['vehicle_id' => $trip['vehicle_id']]);
+                $new_trip = Trip::create([
+                    'price' => $trip['price'],
+                    'vehicle_id' => $trip['vehicle_id']
+                ]);
 
                 //Generate timestamps for start and end locations
                 $start_time_hit = $trip['start_time'];
@@ -71,6 +74,7 @@ class TripSeeder extends Seeder
 
             $data[] =
                 [
+                    'price' => rand(20,100)* 1000,
                     'vehicle_id' => Vehicle::all()->random()->id,
                     'start_time' => $dates->start_time,
                     'end_time' => $dates->end_time,
