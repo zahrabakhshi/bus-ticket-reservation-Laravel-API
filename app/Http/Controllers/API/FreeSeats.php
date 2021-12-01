@@ -46,11 +46,11 @@ class FreeSeats
 
         $temporary_reserved_array = [];
 
-        if(TemporaryReserve::where('trip_id',$trip_id)->doesntExist){
+        if(TemporaryReserve::where('trip_id',$trip_id)->doesntExist()){
             return [];
         }
 
-        foreach (TemporaryReserve::where('trip_id',$trip_id)->get(['seats_json','created_at']) as $item) {
+        foreach (TemporaryReserve::where('trip_id',$trip_id)->get(['seats_json','created_at','id']) as $item) {
 
             $c = new Carbon($item->created_at);
             if($c->addRealMinutes(15)->isPast()){

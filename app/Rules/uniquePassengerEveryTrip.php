@@ -36,6 +36,7 @@ class uniquePassengerEveryTrip implements Rule
             return true;
         }
 
+
         //Get current travel passengers id
         $trip_passengers = Trip::findOrFail($trip_id)->tickets->pluck('passenger_id')->toArray();
 

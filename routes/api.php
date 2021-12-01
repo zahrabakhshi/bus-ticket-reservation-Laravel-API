@@ -9,6 +9,7 @@ use App\Http\Controllers\API\ReserveController;
 use App\Http\Controllers\API\TownController;
 use App\Http\Controllers\API\TripController;
 use App\Http\Controllers\API\VehicleController;
+use App\Http\Controllers\API\ZarinPallController;
 use App\Models\Trip;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -58,9 +59,9 @@ Route::middleware('auth:api')->name('api.')->group(function () {
 
     Route::post('/temporaryreserve', [ReserveController::class,'temporaryReserve']);//2
 
-    Route::post('/store', [ReserveController::class, 'store']);
+    Route::post('/store', [ReserveController::class, 'store'])->name('store_tickets');
 
-    Route::post('/receipts', [ReserveController::class, 'receipts']);//3
+    Route::get('/receipts', [ReserveController::class, 'receipts']);//3
 
 });
 
@@ -68,7 +69,10 @@ Route::get('/landing', [LandingController::class, 'getLandingData']);
 
 Route::post('/reservables', [LandingController::class, 'getReservableVehicles']);
 
-Route::post('/businfo', [ReserveController::class, 'busInfo']); //1
+Route::get('/businfo', [ReserveController::class, 'busInfo']);
+
+Route::get('order',[ZarinPallController::class, 'order']);
+Route::post('shop',[ZarinPallController::class,'add_order']);
 
 //Route::get('/free',[ReserveController::class,'findFreeSeats2'] );
 

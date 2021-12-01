@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ReservableVehiclesRequest;
 use App\Models\Comment;
 use App\Models\Company;
 use App\Models\Location;
@@ -18,59 +19,32 @@ class LandingController extends Controller
 
     public function getLandingData()
     {
-        try {
-            return response()->json([
-                'data' => [
-                    'app info' => $this->getAppInfo(),
-                    'companies' => $this->getRandomCompanies(),
-                    'comments' => $this->getRandomComments(),
-                ],
-                'message' => 'successful data fetched',
-                'status' => Response::HTTP_OK,
-            ]);
-        } catch (\Throwable $exception) {
-            return response()->json([
-                'message' => 'failed fetched data',
-                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-            ]);
-        }
+        return response()->json([
+            'data' => [
+                'app info' => $this->getAppInfo(),
+                'companies' => $this->getRandomCompanies(),
+                'comments' => $this->getRandomComments(),
+            ],
+            'message' => 'successful data fetched',
+            'status' => Response::HTTP_OK,
+        ]);
+
 
     }
 
     public function getRandomCompanies()
     {
-        try {
-            return Company::select("name", "email", "phone_number")->inRandomOrder()->limit(5)->get();
-        } catch (\Throwable $exception) {
-            return response()->json([
-                'message' => 'failed to get random companies',
-                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-            ]);
-        }
+        return Company::select("name", "email", "phone_number")->inRandomOrder()->limit(5)->get();
+
     }
 
     public function getRandomComments()
     {
-        try {
-            return Comment::with('company')->inRandomOrder()->limit(5)->get();
-        } catch (\Throwable $exception) {
-            return response()->json([
-                'message' => 'failed to get random comments',
-                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-            ]);
-        }
+        return Comment::with('company')->inRandomOrder()->limit(5)->get();
     }
 
-    public function getReservableVehicles(Request $request)
+    public function getReservableVehicles(ReservableVehiclesRequest $request)
     {
-        try {
-
-            //validate user request
-            $this->validate($request, [
-                'origin' => 'required|exists:towns,id',
-                'date' => 'required|integer',
-                'destination' => 'required|exists:towns,id',
-            ]);
 
             //To prevent sending unwanted data
             $input = $request->only([
@@ -164,19 +138,6 @@ class LandingController extends Controller
                 'message' => 'successful trips fetched',
                 'status' => Response::HTTP_OK,
             ]);
-
-        } catch (ValidationException$exception) {
-            return response()->json([
-                'message' => $exception->getMessages(),
-                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-            ]);
-
-        } catch (\Throwable $exception) {
-            return response()->json([
-                'message' => 'failed to fetch trips',
-                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-            ]);
-        }
 
     }
 
