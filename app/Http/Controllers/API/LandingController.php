@@ -110,6 +110,7 @@ class LandingController extends Controller
                     //Add a trip to the trips array by scrolling the loop
                     $trips[] = [
                         'id' => $trip->id,
+                        'price' => $trip->price,
                         'vehicle' => $trip->vehicle()->get(),
                         'start_location' => $start_location,
                         'end_location' => $end_location,
@@ -159,6 +160,11 @@ class LandingController extends Controller
             ]);
         }
 
+    }
+
+    public function tst()
+    {
+        return 'hiiiiiiiiiii';
     }
 
 }

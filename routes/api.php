@@ -67,12 +67,14 @@ Route::middleware('auth:api')->name('api.')->group(function () {
 
 Route::get('/landing', [LandingController::class, 'getLandingData']);
 
-Route::post('/reservables', [LandingController::class, 'getReservableVehicles']);
+Route::get('/reservables', [LandingController::class, 'getReservableVehicles']);
 
 Route::get('/businfo', [ReserveController::class, 'busInfo']);
 
 Route::get('order',[ZarinPallController::class, 'order']);
 Route::post('shop',[ZarinPallController::class,'add_order']);
+
+Route::get('tst',[LandingController::class, 'tst']);
 
 //Route::get('/free',[ReserveController::class,'findFreeSeats2'] );
 

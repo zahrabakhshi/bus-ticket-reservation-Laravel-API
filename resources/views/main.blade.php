@@ -34,7 +34,7 @@
         </div>
 
         <div class="w-75 my-3 rounded border bg-white" id="vehicle_list">
-            <ul class="w-100" id="trips"  style="list-style-type:none;">
+            <ul class="w-100" id="trips" style="list-style-type:none;">
             </ul>
         </div>
 
@@ -78,7 +78,7 @@
                                 "<div class=''>" +
                                 "<div class='row'>" +
                                 "<div class='col-9 p-4 border-left'>" +
-                                "<p class='text-muted font-weight-lighter' id='company_name'>"+ value['vehicle']['0']['plate'] +"</p>" +
+                                "<p class='text-muted font-weight-lighter' id='company_name'>" + value['vehicle']['0']['plate'] + "</p>" +
                                 "<p class='font-weight-bolder' id='vehicle_name'>" + "ماهانVIP مانیتوردار(کاوه و صفه )" + "</p>" +
                                 "<div class='col-8'>" +
                                 "<div class='row py-2'>" +
