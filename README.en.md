@@ -1,4 +1,4 @@
-#   Web application for selling bus tickets online
+#   Laravel Rest API Web application for selling bus tickets online
 *   Ability to register and log in with four levels of access for admin, regular user, super user and companies
 *   Login and registration with laravel passport package implemented
 *   Companies have a user panel with the following features:
