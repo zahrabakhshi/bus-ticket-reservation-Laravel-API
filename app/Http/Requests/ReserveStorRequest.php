@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\PassengerCountMatchesTemporaryReserveSeates;
+use App\Rules\PassengerSeatsMatchTemporaryReservesSeats;
 use App\Rules\SeatsAvailable;
+use App\Rules\TemporayReserveOwner;
 use App\Rules\uniquePassengerEveryTrip;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -15,7 +18,7 @@ class ReserveStorRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -26,7 +29,9 @@ class ReserveStorRequest extends FormRequest
     public function rules()
     {
         return [
+            'temporary_reserve_id' => ['required','exists:temporary_reserves,id',new TemporayReserveOwner() ],
             'trip_id' => ['required', 'exists:trips,id', new uniquePassengerEveryTrip()],
+            'passengers' => [new PassengerSeatsMatchTemporaryReservesSeats()],
             'passengers.*.national_code' => 'required|digits:10',
             'passengers.*.gender' => 'required|boolean',
             'passengers.*.name' => 'string|min:3|max:50',

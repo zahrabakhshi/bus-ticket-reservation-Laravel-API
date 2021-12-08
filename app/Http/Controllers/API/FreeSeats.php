@@ -72,20 +72,6 @@ class FreeSeats
             return $temporary_reserved_array;
         }
 
-
-//        foreach (TemporaryReserve::where('trip_id',$trip_id)->get()->pluck('seats_json') as $item) {
-//
-//            $temporary_create_time = $item
-//
-//            $temporary_reserved = json_decode($item,true);
-//
-//            if(!empty(array_intersect($temporary_reserved_array,$temporary_reserved))){
-//                throw new Exception('cuse a conflict between temporary reserved arrays');
-//            }
-//
-//            $temporary_reserved_array = array_merge($temporary_reserved_array, $temporary_reserved);
-//        }
-
         return $temporary_reserved_array;
 
     }

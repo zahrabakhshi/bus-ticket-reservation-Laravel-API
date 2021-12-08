@@ -30,7 +30,7 @@ class ZarinPallController extends Controller
 
         $data = array("merchant_id" => "$MerchantID", "authority" => $Authority, "amount" => $request->amount);
         $jsonData = json_encode($data);
-        $ch = curl_init('https://banktest.ir/gateway/zarinpal/pg/rest/WebGate/PaymentVerification.json');
+        $ch = curl_init('https://api.zarinpal.com/pg/v4/payment/verify.json');
         curl_setopt($ch, CURLOPT_USERAGENT, 'ZarinPal Rest Api v4');
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);

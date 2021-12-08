@@ -2,10 +2,10 @@
 
 namespace App\Rules;
 
-use App\Http\Controllers\API\FreeSeats;
+use App\Models\TemporaryReserve;
 use Illuminate\Contracts\Validation\Rule;
 
-class SeatsAvailable implements Rule
+class TemporayReserveOwner implements Rule
 {
     /**
      * Create a new rule instance.
@@ -26,16 +26,13 @@ class SeatsAvailable implements Rule
      */
     public function passes($attribute, $value)
     {
-        $trip_id = request()->get('trip_id');
-        $free_seats_array = FreeSeats::findFreeSeats($trip_id);
-//        dd($free_seats_array);
+        $temporary_reserve_id = $value;
+         $user_id = auth('api')->id();
 
-        if(!in_array($value,$free_seats_array)){
+        if(TemporaryReserve::findOrFail($temporary_reserve_id)->user->id !== $user_id ){
             return false;
-        }else{
-            return true;
         }
-
+        return true;
     }
 
     /**

@@ -57,11 +57,19 @@ Route::middleware('auth:api')->name('api.')->group(function () {
 
     });
 
-    Route::post('/temporaryreserve', [ReserveController::class,'temporaryReserve']);//2
+    Route::post('/temporaryreserve', [ReserveController::class,'temporaryReserve']);
 
     Route::post('/store', [ReserveController::class, 'store'])->name('store_tickets');
 
-    Route::get('/receipts', [ReserveController::class, 'receipts']);//3
+    Route::get('order',[ZarinPallController::class, 'order']);
+
+    Route::post('shop',[ZarinPallController::class,'add_order']);
+
+    Route::get('pdf', [ReserveController::class, 'generatePDF']);
+
+    Route::post('sendmail', [ReserveController::class, 'sendEmail']);
+
+    Route::get('/receipts', [ReserveController::class, 'receipts']);
 
 });
 
@@ -71,16 +79,7 @@ Route::get('/reservables', [LandingController::class, 'getReservableVehicles']);
 
 Route::get('/businfo', [ReserveController::class, 'busInfo']);
 
-Route::get('order',[ZarinPallController::class, 'order']);
 Route::post('shop',[ZarinPallController::class,'add_order']);
 
 Route::get('tst',[LandingController::class, 'tst']);
 
-//Route::get('/free',[ReserveController::class,'findFreeSeats2'] );
-
-//Route::post('/flush',function (Request $request){
-//     $request->session()->flush();
-//});
-//Route::post('/sessions',function (Request $request){
-//    dd($request->session()->all());
-//});

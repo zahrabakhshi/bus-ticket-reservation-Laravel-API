@@ -2,10 +2,10 @@
 
 namespace App\Rules;
 
-use App\Http\Controllers\API\FreeSeats;
+use App\Models\TemporaryReserve;
 use Illuminate\Contracts\Validation\Rule;
 
-class SeatsAvailable implements Rule
+class PassengerSeatsMatchTemporaryReservesSeats implements Rule
 {
     /**
      * Create a new rule instance.
@@ -20,21 +20,21 @@ class SeatsAvailable implements Rule
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string  $attribute
-     * @param  mixed  $value
+     * @param string $attribute
+     * @param mixed $value
      * @return bool
      */
     public function passes($attribute, $value)
     {
-        $trip_id = request()->get('trip_id');
-        $free_seats_array = FreeSeats::findFreeSeats($trip_id);
-//        dd($free_seats_array);
+        $temporary_reserve = TemporaryReserve::find(request()->get('temporary_reserve_id'));
+        $temporary_reserves_seats = json_decode($temporary_reserve->seats_json, true);
 
-        if(!in_array($value,$free_seats_array)){
+        $input_seats = collect($value)->pluck('seat_number')->toArray();
+
+        if (!empty(array_diff($input_seats, $temporary_reserves_seats))) {
             return false;
-        }else{
-            return true;
         }
+        return true;
 
     }
 

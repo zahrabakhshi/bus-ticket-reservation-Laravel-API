@@ -6,7 +6,9 @@ use App\Http\Requests\ReceiptsRequest;
 use App\Http\Requests\ReserveStorRequest;
 use App\Http\Requests\TemporaryReserveRequest;
 use App\Models\TemporaryReserve;
+use App\Models\User;
 use App\Rules\SeatsAvailable;
+use Carbon\Carbon;
 use Throwable;
 use App\Models\Trip;
 use App\Models\Ticket;
@@ -142,6 +144,7 @@ class ReserveController extends Controller
     {
 
         $input = $request->only(
+            'temporary_reserve_id',
             'trip_id',
             'passengers.*.national_code',
             'passengers.*.gender',
@@ -162,18 +165,30 @@ class ReserveController extends Controller
 
         $user = auth('api')->user();
 
-        $new_reserve = [
+        $new_reserve_data = [
             'user_id' => $user->id,
             'trip_id' => $trip->id,
         ];
 
         $transaction_needle_data = [
+            'temporary reserve id' => $input['temporary_reserve_id'],
             'passengers' => $passengers,
-            'new reserve' => $new_reserve
+            'new reserve' => $new_reserve_data
         ];
 
 
         $tickets = DB::transaction(function () use ($transaction_needle_data) {
+
+            $temporary_reserve = TemporaryReserve::find($transaction_needle_data['temporary reserve id']);
+
+            $c = new Carbon($temporary_reserve->created_at);
+
+            if($c->addRealMinutes(15)->isPast()){
+                return response()->json([
+                    'message' => 'the reserve is out of 15 minutes pleas select the seats again',
+                    'status' => Response::HTTP_REQUEST_URI_TOO_LONG,
+                ]);
+            }
 
             $new_reserve = Reserve::create($transaction_needle_data['new reserve']);
 
@@ -184,16 +199,17 @@ class ReserveController extends Controller
 
                 if (Passenger::where('national_code', $passenger_input['national_code'])->exists()) {
 
-                    //todo:return passenger qablan voljus sare mikhay updatesh koni?
-                    //age are?
-                    //age na?
+                    $ticketable_id = Passenger::where('national_code', $passenger_input['national_code'])->first()->id;
+                    $ticketable_obj = Passenger::find($ticketable_id);
 
-                    $passenger_id = Passenger::where('national_code', $passenger_input['national_code'])->first()->id;
-                    $passenger_object = Passenger::find($passenger_id);
+                }elseif(User::where('national_code', $passenger_input['national_code'])->exists()){
+
+                    $ticketable_id = User::where('national_code', $passenger_input['national_code'])->first()->id;
+                    $ticketable_obj = User::find($ticketable_id);
 
                 } else {
 
-                    $passenger_object = Passenger::create(array_except($passenger_input, ['seat_number']));
+                    $ticketable_obj = Passenger::create(array_except($passenger_input, ['seat_number']));
 
                 }
 
@@ -201,13 +217,14 @@ class ReserveController extends Controller
 
                     'seat_number' => $passenger_input['seat_number'],
                     'reserve_id' => $new_reserve->id,
-                    'passenger_id' => $passenger_object->id,
 
                 ];
 
-                $new_tickets[] = Ticket::create($ticket_data);
+                $new_tickets[] = $ticketable_obj->tickets()->create($ticket_data);
 
             }
+
+            $temporary_reserve->delete();
 
             return $new_tickets;
 

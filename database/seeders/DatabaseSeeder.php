@@ -14,17 +14,17 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // \App\Models\User::factory(10)->create();
-//        $this->call(RoleSeeder::class);
-//        $this->call(UserSeeder::class);
-//        $this->call(RoleUserSeeder::class);
-//        $this->call(CompanySeeder::class);
-//        $this->call(CommentSeeder::class);
-//        $this->call(VehicleSeeder::class);
-//        $this->call(TownSeeder::class);
-//        $this->call(TripSeeder::class);
-//        $this->call(ReserveSeeder::class);
-//        $this->call(PassengerSeeder::class);
+        $this->call(RoleSeeder::class);
+        $this->call(UserSeeder::class);
+        $this->call(RoleUserSeeder::class);
+        $this->call(CompanySeeder::class);
+        $this->call(CommentSeeder::class);
+        $this->call(VehicleSeeder::class);
+        $this->call(TownSeeder::class);
+        $this->call(TripSeeder::class);
+        $this->call(ReserveSeeder::class);
+        $this->call(PassengerSeeder::class);
         $this->call(TicketSeeder::class);
-//        $this->call(TemporaryReservesSeeder::class);
+        $this->call(TemporaryReservesSeeder::class);
     }
 }

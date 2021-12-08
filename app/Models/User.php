@@ -64,4 +64,8 @@ class User extends Authenticatable
         return $this->morphMany(Ticket::class, 'ticketable');
     }
 
+    public function temporaryReserves(){
+        return $this->hasMany(TemporaryReserve::class);
+    }
+
 }
