@@ -59,3 +59,6 @@ Route::group(['prefix' => 'user' , 'middleware' => 'permission:user' ], function
 
 Route::post('/reservable', [LandingController::class, 'getReservableVehicles']);
 
+Route::get('pdf', function (){
+    return view('myPDF');
+});

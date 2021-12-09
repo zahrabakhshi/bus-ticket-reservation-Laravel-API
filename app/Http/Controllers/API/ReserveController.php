@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\ReceiptsRequest;
 use App\Http\Requests\ReserveStorRequest;
 use App\Http\Requests\TemporaryReserveRequest;
+use App\lib\zarinpal;
 use App\Models\TemporaryReserve;
 use App\Models\User;
 use App\Rules\SeatsAvailable;
@@ -137,6 +138,13 @@ class ReserveController extends Controller
             'message' => 'successful reserve total cost calculated',
             'status' => Response::HTTP_OK,
         ]);
+
+    }
+
+    public function confirmReceipts(Request $request){
+        $amount = $request->amount;
+        $zarin_pal_obj = new zarinpal();
+        $zarin_pal_obj->pay($amount);
 
     }
 

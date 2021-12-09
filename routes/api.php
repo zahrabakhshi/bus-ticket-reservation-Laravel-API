@@ -5,6 +5,7 @@ use App\Http\Controllers\API\AppUser\CompanyController;
 use App\Http\Controllers\API\Auth\passportAuthController;
 use App\Http\Controllers\API\AppUser\SuperUserController;
 use App\Http\Controllers\API\LandingController;
+use App\Http\Controllers\API\PDFController;
 use App\Http\Controllers\API\ReserveController;
 use App\Http\Controllers\API\TownController;
 use App\Http\Controllers\API\TripController;
@@ -65,11 +66,12 @@ Route::middleware('auth:api')->name('api.')->group(function () {
 
     Route::post('shop',[ZarinPallController::class,'add_order']);
 
-    Route::get('pdf', [ReserveController::class, 'generatePDF']);
-
     Route::post('sendmail', [ReserveController::class, 'sendEmail']);
 
     Route::get('/receipts', [ReserveController::class, 'receipts']);
+
+    Route::post('/pdf', [PDFController::class, 'generatePDF']);
+
 
 });
 
@@ -82,4 +84,17 @@ Route::get('/businfo', [ReserveController::class, 'busInfo']);
 Route::post('shop',[ZarinPallController::class,'add_order']);
 
 Route::get('tst',[LandingController::class, 'tst']);
+
+Route::get('/pdf', function (){
+    return view('myPDF')->with([
+        'passenger_first_name' => 'زهرا',
+        'passenger_last_name' => 'بخشی',
+        'ticket_create_date' => '2021-07-04 14:52:03',
+        'origin' => 'تهران',
+        'destination' => 'گرگان',
+        'company_name' => 'شرکت مسافربری گرگان سفر',
+        'departure_date_time' => '2021-08-05 15:00',
+        'seats_number' => '2',
+    ]);
+});
 

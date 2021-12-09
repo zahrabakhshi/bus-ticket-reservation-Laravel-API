@@ -52,10 +52,9 @@ class Handler extends ExceptionHandler
         });
         $this->renderable(function (Throwable $e){
             return response()->json([
-//                'message' => 'cause server error',
                 'message' => $e->getMessage(),
+                'file' => $e->getFile(),
                 'line' => $e->getLine(),
-//                'file' => $e->getTrace(),
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR
             ]);
         });

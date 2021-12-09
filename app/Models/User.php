@@ -68,4 +68,8 @@ class User extends Authenticatable
         return $this->hasMany(TemporaryReserve::class);
     }
 
+    public function reserves(){
+        return $this->hasMany(Reserve::class);
+    }
+
 }

@@ -18,8 +18,9 @@ class ZarinPallController extends Controller
     {
 
         $order = new zarinpal();
-        $res = $order->pay($request->price,$request->email,$request->phone_number);
-        return redirect('https://www.zarinpal.com/pg/StartPay/' . $res);
+        $res = $order->pay($request->price);
+        dd($request->price) ;
+        return redirect('https://sandbox.zarinpal.com/pg/StartPay/' . $res);
 
     }
 
@@ -30,6 +31,7 @@ class ZarinPallController extends Controller
 
         $data = array("merchant_id" => "$MerchantID", "authority" => $Authority, "amount" => $request->amount);
         $jsonData = json_encode($data);
+
         $ch = curl_init('https://api.zarinpal.com/pg/v4/payment/verify.json');
         curl_setopt($ch, CURLOPT_USERAGENT, 'ZarinPal Rest Api v4');
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
@@ -43,8 +45,6 @@ class ZarinPallController extends Controller
         $result = curl_exec($ch);
         $err = curl_error($ch);
         curl_close($ch);
-
-        $result = json_decode($result, true);
 
         if ($err) {
 
@@ -67,8 +67,7 @@ class ZarinPallController extends Controller
 
                 return response()->json([
                     'message' => $result['errors']['message'],
-                    'status' => $result['errors']['code'], // is it correct or bellow is correct?
-//                    'status' => Response::HTTP_OK,
+                    'status' => $result['errors']['code'],
                 ]);
 
             }
